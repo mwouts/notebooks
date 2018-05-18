@@ -15,7 +15,7 @@ fig = {'data':[go.Scatter(x=[1,2,3,4],y=[1,4,9,16])],
 
 # Plot in python
 
-Not yet working, but almost. Ouput is 'application/vnd.plotly.v1+json'
+Not yet working, but almost. Ouput is 'application/vnd.plotly.v1+json' - I've opened an [issue](https://github.com/rstudio/reticulate/issues/269) for this.
 
 ```{python display_plot_from_python}
 plotly.offline.iplot(fig)
