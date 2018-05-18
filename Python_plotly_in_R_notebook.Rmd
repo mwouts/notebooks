@@ -1,0 +1,45 @@
+---
+title: "Python plotly in Rmd"
+---
+
+# Create plotly figure in python
+
+```{python generate_plotly_figure_in_python}
+import plotly
+import plotly.graph_objs as go
+fig = {'data':[go.Scatter(x=[1,2,3,4],y=[1,4,9,16])],
+       'layout':go.Layout(title='Plot generated in python')}
+```
+
+---
+
+# Plot in python
+
+Not yet working, but almost. Ouput is 'application/vnd.plotly.v1+json'
+
+```{python display_plot_from_python}
+plotly.offline.iplot(fig)
+```
+
+---
+
+# Json export
+
+As an alternative, we export the python figure to json
+
+```{python export_plot_to_json}
+import json
+fig_as_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+```
+
+---
+
+# Display plot as a plotly widget from R
+
+and display the figure in R
+
+```{r display_plot_from_R}
+plotly::as_widget(
+  jsonlite::fromJSON(
+    reticulate::py$fig_as_json, simplifyVector=FALSE))
+```
