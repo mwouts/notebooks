@@ -1,0 +1,78 @@
+---
+title: "Capturing python rich outputs in Rmd documents"
+output:
+  html_document:
+    df_print: paged
+---
+
+In the below we describe the result of the capture of
+
+- a png image
+- plotly initialization
+- a plotly graph
+
+In the below, capture is not able to capture any of the outputs below. However reticulate does capture text and html outputs.
+
+```{python version}
+import sys
+import IPython
+print({'python':sys.version, 'IPython':IPython.__version__})
+```
+
+
+```{python capture}
+from IPython.utils import capture
+
+def describe_content(content, truncate=80):
+    s = str(content)
+    return s[:truncate-3]+'...' if len(s)>truncate else s
+    
+def describe_capture(cap):
+    if len(cap.outputs)==0:
+        print('No output captured')
+    else:
+        for i, o in enumerate(cap.outputs):
+            types = ['{}={}'.format(t, describe_content(content)) for t, content in o.data.items()]            
+            print('data for output #{}:\n    {}'.format(i+1, '\n    '.join(types)))
+```
+
+```{python display_image}
+from IPython.display import Image, display
+display(Image(filename='image.png'))
+```
+
+```{python capture_image}
+with capture.capture_output() as cap:
+    display(Image(filename='image.png'))
+
+describe_capture(cap)
+```
+
+This one is commented - when active, it injects the plotly.js library (2.5Mo).
+```
+## {'text/html': '<script type=\'text/javascript\'>if(!window.Plotly){define(\'plotly\', function(require, exports, module) {/**\n* plotly.js v1.37.1\n* [...]
+```
+
+```{python display_plotly_js}
+import plotly
+#plotly.offline.init_notebook_mode()
+```
+
+```{python capture_plotly_js}
+with capture.capture_output() as cap:
+    plotly.offline.init_notebook_mode()
+  
+describe_capture(cap)
+```
+
+```{python display_plotly_plot}
+plotly.offline.iplot([plotly.graph_objs.Bar(y=[2,1,3])])
+```
+
+
+```{python capture_plotly_plot}
+with capture.capture_output() as cap:
+    plotly.offline.iplot([plotly.graph_objs.Bar(y=[2,1,3])])
+  
+describe_capture(cap)
+```
